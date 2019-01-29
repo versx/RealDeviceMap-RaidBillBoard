@@ -33,7 +33,7 @@ SELECT
     team_id,
     ex_raid_eligible
 FROM 
-    rdmdb.gym
+    gym
 WHERE
     raid_pokemon_id IS NOT NULL && 
     name IS NOT NULL &&
@@ -59,7 +59,7 @@ ORDER BY
         echo "<th>Gym</th>";
     echo "</tr>";
     echo "</thead>";
-    while ($row = $result->fetch()) {	
+    while ($row = $result->fetch()) {
       $geofence = $geofence_srvc->get_geofence($row['lat'], $row['lon']);
       $city = ($geofence == null ? $unknown_value : $geofence->name);
       $map_link = sprintf($googleMapsLink, $row["lat"], $row["lon"]);
@@ -80,7 +80,7 @@ ORDER BY
       echo "</tr>";
     }
     echo "</table>";
-		
+
   // Free result set
   unset($result);
   } else{
