@@ -1,4 +1,4 @@
-- Filter by mutliple cities
+- Filter by multiple cities
 - Fix egg time countdown
 - Add raid_is_exclusive column
 - Show nest icon queried on map

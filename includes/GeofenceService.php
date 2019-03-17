@@ -5,6 +5,20 @@ use Location\Polygon;
 class Geofence {
     public $name;
     public $polygon;
+
+    public function get_flat_coordinates() {
+        $flatCoords = "";
+        $length = count($polygon);
+        for ($i = 0; $i < $length; $i++) {
+            $coord = $polygon[$i];
+            $flatCoords .= $coord[0] . " " . $coord[1];
+            if ($i == $length - 1) {
+                break;
+            }
+            $flatCoords .= ",";
+        }
+        return $flatCoords;
+    }
 }
 class GeofenceService {
     public $geofences = [];

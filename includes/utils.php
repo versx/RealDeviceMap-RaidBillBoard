@@ -177,6 +177,37 @@ LIMIT
     return $data;
 }
 
+function get_gyms() {
+    global $config;
+    $db = new DbConnector($config['db']);
+    $pdo = $db->getConnection();
+    $sql = "
+SELECT 
+  lat, 
+  lon,
+  guarding_pokemon_id,
+  availble_slots,
+  team_id,
+  in_battle,
+  name,
+  updated
+FROM
+  gym
+WHERE
+  name IS NOT NULL
+  AND enabled = 1;
+";
+    $result = $pdo->query($sql);
+    $data;
+    if ($result->rowCount() > 0) {
+        $data = $result->fetchAll();
+    }
+    unset($pdo);
+    unset($db);
+
+    return $data;
+}
+
 function get_raid_image($pokemonId, $raidLevel) {
     global $config;
     if ($pokemonId > 0) {

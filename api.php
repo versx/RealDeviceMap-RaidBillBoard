@@ -1,9 +1,11 @@
 <?php
 session_start();
 
+require_once './vendor/autoload.php';
 include './config.php';
 include './includes/DbConnector.php';
 include './includes/utils.php';
+include './static/data/pokedex.php';
 
 define("DEFAULT_LIMIT", 999999);
 
@@ -17,7 +19,11 @@ if (!(isset($_SESSION['token']) && !empty($_SESSION['token']))) {
     die();
 }
 $rawData = file_get_contents("php://input");
-$data = json_decode($rawData, true);
+if (strpos($rawData, "&columns%") !== false) {
+    parse_str($rawData, $data);
+} else {
+    $data = json_decode($rawData, true);
+}
 if ($data === 0) {
     die();
 }
@@ -152,6 +158,116 @@ if (!(isset($data['type']) && !empty($data['type']))) {
             ];
             echo json_encode($obj);
             */
+            break;
+        case "gyms":
+        include_once './includes/GeofenceService.php';
+        $geofenceSrvc = new GeofenceService();
+
+// DB table to use
+$table = 'gym';
+ 
+// Table's primary key
+$primaryKey = 'id';
+ 
+// Array of database columns which should be read and sent back to DataTables.
+// The `db` parameter represents the column name in the database, while the `dt`
+// parameter represents the DataTables column identifier. In this case simple
+// indexes
+$columns = [
+    [
+        'db'        => 'id',
+        'dt'        => 'DT_RowId',
+        'formatter' => function($d, $row) {
+            // Technically a DOM id cannot start with an integer, so we prefix
+            // a string. This can also be useful if you have multiple tables
+            // to ensure that the id is unique with a different prefix
+            return 'row_' . $d;
+        }
+    ],
+    [
+        'db'        => 'name', 
+        'dt'        => 'name'
+    ],
+    [
+        'db'        => 'team_id',
+        'dt'        => 'team',
+        'formatter' => function($d, $row) {
+            $team = get_team($d);
+            return '<img src="./static/images/teams/' . strtolower($team) . '.png" height=32 width=32 />&nbsp;' . $team;
+        }
+    ],
+    [
+        'db'        => 'availble_slots',
+        'dt'        => 'slots',
+        'formatter' => function($d, $row) {
+            return $d == 0 ? "Full" : $d;
+        }
+    ],
+    [
+        'db'        => 'guarding_pokemon_id',
+        'dt'        => 'guard',
+        'formatter' => function($d, $row) {
+            global $config;
+            global $pokedex;
+            if ($d > 0) {
+                return '<img src="' . sprintf($config['urls']['images']['pokemon'], $d) . '" height=32 width=32 />&nbsp;' . $pokedex[$d];
+            }
+            return "None";
+        }
+    ],
+    [
+        'db'        => 'in_battle', 
+        'dt'        => 'battle',
+        'formatter' => function($d, $row) {
+            return $d ? "Under Attack!" : "Safe";
+        }
+    ],
+    [
+        'db'        => 'lat',
+        'dt'        => 'lat'
+    ],
+    [
+        'db'        => 'lon',
+        'dt'        => 'city',
+        'formatter' => function($d, $row) {
+            global $config;
+            global $geofenceSrvc;
+            $geofence = $geofenceSrvc->get_geofence($row['lat'], $row['lon']);
+            return $geofence->name ?? $config['ui']['unknownValue'];
+        }
+    ],
+    [
+        'db'        => 'updated',
+        'dt'        => 'updated',
+        'formatter' => function($d, $row) {
+            global $config;
+            return date($config['core']['dateTimeFormat'], $d);
+        }
+    ]
+];
+ 
+// SQL server connection information
+$sql_details = [
+    'user' => $config['db']['user'],
+    'pass' => $config['db']['pass'],
+    'db'   => $config['db']['dbname'],
+    'host' => $config['db']['host'],
+    'port' => $config['db']['port']
+];
+
+require('./includes/ssp.class.php');
+
+/*
+$city = "Whittier";//$data["columns"][6]["search"]["value"];
+file_put_contents("filter.log", print_r($data, true), FILE_APPEND);
+$data = SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns);
+$data["data"] = array_values(array_filter($data["data"], function($v, $k) {
+    return strcasecmp(trim($v["city"]), $city) == 0;
+}, ARRAY_FILTER_USE_BOTH));
+*/
+echo json_encode(
+    SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns)
+);
             break;
         case "nests":
             $coords = $data["data"]["coordinates"];

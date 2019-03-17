@@ -1,7 +1,6 @@
 <?php
 include './vendor/autoload.php';
 include './includes/GeofenceService.php';
-include './static/data/pokedex.php';
 
 $geofenceSrvc = new GeofenceService();
 
@@ -12,54 +11,55 @@ $filters = "
       <div class='input-group-prepend'>
         <label class='input-group-text' for='filter-gym'>Gym</label>
       </div>
-      <input type='text' id='filter-gym' class='form-control input-lg' onkeyup='filter_gyms()' placeholder='Search by gym...' title='Type in a gym name'></input>
+      <input type='text' id='filter-gym' class='form-control input-lg' placeholder='Search by gym...' title='Type in a gym name'></input>
     </div>
     <div class='input-group mb-3'>
       <div class='input-group-prepend'>
         <label class='input-group-text' for='filter-team'>Team</label>
       </div>
-      <select id='filter-team' class='custom-select' onchange='filter_gyms()'>
-        <option selected>Select</option>
-        <option value='all'>All</option>
-        <option value='Neutral'>Neutral</option>
-        <option value='Mystic'>Mystic</option>
-        <option value='Valor'>Valor</option>
-        <option value='Instinct'>Instinct</option>
+      <select id='filter-team' class='custom-select'>
+        <option disabled selected>Select</option>
+        <option value=''>All</option>
+        <option value='0'>Neutral</option>
+        <option value='1'>Mystic</option>
+        <option value='2'>Valor</option>
+        <option value='3'>Instinct</option>
       </select>
     </div>
     <div class='input-group mb-3'>
       <div class='input-group-prepend'>
         <label class='input-group-text' for='filter-slots'>Available Slots</label>
       </div>
-      <select id='filter-slots' class='custom-select' onchange='filter_gyms()'>
+      <select id='filter-slots' class='custom-select'>
         <option disabled selected>Select</option>
-        <option value='all'>All</option>
-        <option value='full'>Full</option>
+        <option value=''>All</option>
+        <option value='0'>Full</option>
         <option value='1'>1</option>
         <option value='2'>2</option>
         <option value='3'>3</option>
         <option value='4'>4</option>
         <option value='5'>5</option>
+        <option value='6'>Empty</option>
       </select>
     </div>
     <div class='input-group mb-3'>
       <div class='input-group-prepend'>
         <label class='input-group-text' for='filter-battle'>In Battle Status</label>
       </div>
-      <select id='filter-battle' class='custom-select' onchange='filter_gyms()'>
+      <select id='filter-battle' class='custom-select'>
         <option disabled selected>Select</option>
-        <option value='all'>All</option>
-        <option value='Under Attack!'>Yes</option>
-        <option value='Safe'>No</option>
+        <option value=''>All</option>
+        <option value='1'>Yes</option>
+        <option value='0'>No</option>
       </select>
     </div>
     <div class='input-group mb-3'>
       <div class='input-group-prepend'>
         <label class='input-group-text' for='filter-city'>City</label>
       </div>
-      <select id='filter-city' class='custom-select' onchange='filter_gyms()'>
+      <select id='filter-city' class='custom-select'>
         <option disabled selected>Select</option>
-        <option value='all'>All</option>
+        <option value=''>All</option>
         <option value='" . $config['ui']['unknownValue'] . "'>" . $config['ui']['unknownValue'] . "</option>";
         $count = count($geofenceSrvc->geofences);
         for ($i = 0; $i < $count; $i++) {
@@ -126,96 +126,172 @@ $modal = "
     </div>
   </div>
 </div>
+<div id='no-more-tables'>
+  <table id='gym-table' class='table table-".$config['ui']['table']['style']." ".($config['ui']['table']['striped'] ? 'table-striped' : null)." display' border='1' style='width:100%''>
+    <thead class='thead-".$config['ui']['table']['headerStyle']."'>
+      <tr class='text-nowrap'>
+        <th></th>
+        <th>Gym</th>
+        <th>Team</th>
+        <th>Available Slots</th>
+        <th>Guarding Pokemon</th>
+        <th>In Battle</th>
+        <th>City</th>
+        <th>Updated</th>
+      </tr>
+    </thead>
+    <tbody class='text-nowrap'>
+    </tbody>
+  </table>
+</div>
 ";
-
-// Establish connection to database
-$db = new DbConnector($config['db']);
-$pdo = $db->getConnection();
-
-// Query Database and Build Raid Billboard
-try {
-    $sql = "
-SELECT 
-  lat, 
-  lon,
-  guarding_pokemon_id,
-  availble_slots,
-  team_id,
-  in_battle,
-  name,
-  updated
-FROM
-  gym
-WHERE
-  name IS NOT NULL
-  AND enabled = 1;
-";
-
-    $result = $pdo->query($sql);
-    if ($result->rowCount() > 0) {
-        echo $modal;
-        echo "<div id='no-more-tables'>";
-        echo "<table id='gym-table' class='table table-".$config['ui']['table']['style']." ".($config['ui']['table']['striped'] ? 'table-striped' : null)."' border='1'>";
-        echo "<thead class='thead-".$config['ui']['table']['headerStyle']."'>";
-        echo "<tr class='text-nowrap'>";
-            echo "<th class='remove'>Remove</th>";
-            echo "<th class='gym'>Gym</th>";
-            echo "<th class='team'>Team</th>";
-            echo "<th class='slots'>Available Slots</th>";
-            echo "<th class='guard'>Guarding Pokemon</th>";
-            echo "<th class='battle'>In Battle</th>";
-            echo "<th class='city'>City</th>";
-            echo "<th class='updated'>Updated</th>";
-        echo "</tr>";
-        echo "</thead>";
-        while ($row = $result->fetch()) {	
-            $geofence = $geofenceSrvc->get_geofence($row['lat'], $row['lon']);
-            $city = ($geofence == null ? $config['ui']['unknownValue'] : $geofence->name);
-            $map_link = sprintf($config['google']['maps'], $row["lat"], $row["lon"]);
-            $team = get_team($row['team_id']);
-            $available_slots = $row['availble_slots'];
-            $guarding_pokemon_id = $row['guarding_pokemon_id'];
-            $in_battle = $row['in_battle'];
-
-            echo "<tr class='text-nowrap'>";
-                echo "<td scope='row' class='text-center' data-title='Remove'><a title='Remove' data-toggle='tooltip' class='delete'><i class='fa fa-times'></i></a></td>";
-                echo "<td data-title='Gym'><a href='" . $map_link . "' target='_blank'>" . $row['name'] . "</a></td>";
-                echo "<td data-title='Team'><img src='./static/images/teams/" . strtolower($team) . ".png' height=32 width=32 />&nbsp;" . $team . "</td>";
-                echo "<td data-title='Available Slots'>" . ($available_slots == 0 ? "Full" : $available_slots) . "</td>";
-                echo "<td data-title='Guarding Pokemon'>" . $pokedex[$guarding_pokemon_id] . "</td>";
-                echo "<td data-title='In Battle'>" . ($in_battle ? "Under Attack!" : "Safe") . "</td>";
-                echo "<td data-title='City'>" . $city . "</td>";
-                echo "<td data-title='Updated'>" . date($config['core']['dateTimeFormat'], $row['updated']) . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo "</div>";
-	  	
-        // Free result set
-        unset($result);
-    } else {
-        echo "<p>No gyms found.</p>";
-    }
-} catch (PDOException $e) {
-    die("ERROR: Could not able to execute $sql. " . $e->getMessage());
-}
-// Close connection
-unset($pdo);
-unset($db);
+echo $modal;
 ?>
 
+<script type="text/javascript" src="./static/js/pokedex.js"></script>
 <script type="text/javascript">
-/*
-$("#gym-table").DataTable({
-  "paging": true,
-  "pagingType": "simple_numbers",
-  "pageLength": 25,
+var tmp = createToken();
+var dt = $("#gym-table").DataTable({
+  "columnDefs": [
+    {
+      "targets": ["name","team","slots","guard","city"],
+      "type": "string",
+      "orderable": true,
+      "searchable": true
+    }
+  ],
+  "columns": [
+    {
+      "class":          "details-control",
+      "orderable":      false,
+      "searchable":     false,
+      "data":           "null",
+      "defaultContent": ""
+    },
+    { "data": "name",   "searchable": true },
+    { "data": "team",   "searchable": true },
+    { "data": "slots",  "searchable": true },
+    { "data": "guard",  "searchable": true },
+    { "data": "battle", "searchable": true },
+    { "data": "city",   "searchable": true },
+    { "data": "updated" }
+  ],
+  "initComplete": function () {
+
+  },
+  //"bFilter": true,
+  /*
+  "createdRow": function (row, data, dataIndex) {
+    if (data["city"].toLowerCase() !== $("filter-city").val()"upland") {
+      //console.log(data["city"]);
+      $(row).show();
+    } else {
+      $(row).hide();
+    }
+  },
+  */
+  //"dom": "Bfrtip", //"lftipr", 
+  "info": false,
+  "lengthMenu": [[25, 50, 75, 100, 150, -1], [25, 50, 75, 100, 150, "All"]],
+  //"order": [[1, 'asc']],
   "orderMulti": true,
-  "info": true,
+  "paging": true,
+  "pagingType": "simple_numbers", //simple, full, numbers, simple_numbers, full_numbers, first_last_numbers
+  "pageLength": -1,
+  "processing": true,
+  "renderer": "bootstrap",
+  "responsive": true,
+  /*
+  "rowCallback": function(row, data) {
+    $('td:eq(2)', row).html('<img src="./static/images/teams/' + data.team.toLowerCase() + '.png" height=32 width=32 />&nbsp;' + data.team);
+    $('td:eq(4)', row).html('<img src="' + sprintf("<?=$config['urls']['images']['pokemon']?>", data.guard) + '" height=32 width=32 />&nbsp;' + pokedex[data.guard]);
+  },
+  */
+  "search.caseInsensitive": true,
   "searching": true,
-  "ajax": ''
+  "serverSide": true,
+  "ajax": {
+    url: "api.php",
+    method: "POST",
+    data: { "type": "gyms", "token": tmp },
+    dataSrc: "data",
+    error: function(data) {
+      console.log("ERROR:", data);
+    }
+  }
 });
-*/
+
+dt.on('search.dt', function() {
+  $('tr').each(function() {
+    var tr = $(this).closest('tr');
+    var row = dt.row(tr);
+    if (row.child.isShown()) {
+      row.child.hide();
+      tr.removeClass('parent');
+    };
+  });
+});
+
+$('#filter-gym').on('change', function() {
+  dt.column(1).search(this.value).draw();
+});
+$('#filter-team').on('change', function() {
+  dt.column(2).search(this.value).draw();
+});
+$('#filter-slots').on('change', function() {
+  dt.column(3).search(this.value).draw();
+});
+$('#filter-battle').on('change', function() {
+  dt.column(5).search(this.value).draw();
+});
+$('#filter-city').change(function() {
+  /*
+  $.fn.dataTable.ext.search.push(
+    function(settings, searchData, index) {
+      console.log("Test");
+      return false;
+    }
+  );
+  dt.draw();
+  //$.fn.dataTable.ext.search.pop();
+  */
+  filter_gyms();
+});
+
+// On each draw, loop over the `detailRows` array and show any child rows
+dt.on('draw', function() {
+  $.each(detailRows, function(i, id) {
+    $('#' + id + ' td.details-control').trigger('click');
+  });
+});
+
+function format(d) {
+  return 'Test';
+}
+
+// Array to track the ids of the details displayed rows
+var detailRows = [];
+
+$('#gym-table tbody').on('click', 'tr td.details-control', function() {
+  var tr = $(this).closest('tr');
+  var row = dt.row(tr);
+  var idx = $.inArray(tr.attr('id'), detailRows);
+  if (row.child.isShown()) {
+    tr.removeClass('details');
+    row.child.hide();
+
+    // Remove from the 'open' array
+    detailRows.splice(idx, 1);
+  } else {
+    tr.addClass('details');
+    row.child(format(row.data())).show();
+
+    // Add to the 'open' array
+    if ( idx === -1) {
+      detailRows.push(tr.attr('id'));
+    }
+  }
+});
 
 $(document).on("click", ".delete", function(){
   $(this).parents("tr").remove();
@@ -248,7 +324,7 @@ if (get("gyms-filter-gym") !== false) {
   $('#filter-gym').val(get("gyms-filter-gym"));
 }
 
-filter_gyms();
+//filter_gyms();
 
 $('#reset-filters').on('click', function() {
   if (confirm("Are you sure you want to reset the gym filters?")) {
@@ -260,4 +336,19 @@ $('#reset-filters').on('click', function() {
     filter_gyms();
   }
 });
+
+function createToken() {
+  //TODO: Secure
+  <?php $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(16)); ?>
+  return "<?php echo $_SESSION['token']; ?>";
+}
 </script>
+<style>
+td.details-control {
+  background: url('./static/images/details_open.png') no-repeat center center;
+  cursor: pointer;
+}
+tr.details td.details-control {
+  background: url('./static/images/details_close.png') no-repeat center center;
+}
+</style>
