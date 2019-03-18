@@ -214,7 +214,24 @@ var dt = $("#gym-table").DataTable({
     url: "api.php",
     method: "POST",
     data: { "type": "gyms", "token": tmp },
-    dataSrc: "data",
+    dataSrc: function(json) {
+      var data = [];
+      var city = $('#filter-city').val();
+      for (var i =0; i < json.data.length; i++) {
+        if (json.data[i].city.toLowerCase().trim() === city) {
+          console.log(json.data[i].city);
+          data.push(json.data[i]);
+        }
+      }
+      return data;
+    },
+    //dataSrc: "data",
+    /*
+    dataFilter: function(data) {
+      var json = jQuery.parseJSON(data);
+      return JSON.stringify(json);
+    },
+    */
     error: function(data) {
       console.log("ERROR:", data);
     }
