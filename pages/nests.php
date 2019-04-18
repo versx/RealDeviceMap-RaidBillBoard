@@ -248,7 +248,7 @@ $('#reset-filters').on('click', function() {
   if (confirm($.i18n('nests_filters_reset_confirm'))) {
     $('#filter-nest').val('');
     $('#filter-pokemon').val('');
-    $('#filter-city').val('All');
+    $('#filter-city').val('');
     filter_nests();
   }
 });
