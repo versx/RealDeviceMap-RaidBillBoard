@@ -85,6 +85,68 @@ $osm = $config['ui']['pages']['nests']['type'] === 'osm';
 <?php
 
 if ($osm === false) {
+
+  $geofenceSrvc = new GeofenceService();
+  $filters = "
+  <div class='container'>
+    <div class='row'>
+      <div class='input-group mb-3'>
+        <div class='input-group-prepend'>
+          <label class='input-group-text' for='filter-nest' data-i18n='nests_filter_nest'>Park</label>
+        </div>
+        <input type='text' id='filter-nest' class='form-control input-lg' onkeyup='filter_nests()' placeholder='Search by park name...' title='Type in a park name'></input>
+      </div>
+      <div class='input-group mb-3'>
+        <div class='input-group-prepend'>
+          <label class='input-group-text' for='filter-pokemon' data-i18n='nests_filter_pokemon'>Pokemon</label>
+        </div>
+        <input type='text' id='filter-pokemon' class='form-control input-lg' onkeyup='filter_nests()' placeholder='Search by Pokemon name...' title='Type in a Pokemon name'></input>
+      </div>
+      <div class='input-group mb-3'>
+        <div class='input-group-prepend'>
+          <label class='input-group-text' for='filter-city' data-i18n='nests_filter_city'>City</label>
+        </div>
+        <select multiple id='filter-city' class='custom-select' onchange='filter_nests()'>
+          <option value='' selected>All</option>";
+          $count = count($geofenceSrvc->geofences);
+          for ($i = 0; $i < $count; $i++) {
+              $geofence = $geofenceSrvc->geofences[$i];
+              $filters .= "<option value='".$geofence->name."'>".$geofence->name."</option>";
+          }
+          $filters .= "
+          <option value='" . $config['ui']['unknownValue'] . "'>" . $config['ui']['unknownValue'] . "</option>
+        </select>
+      </div>
+    </div>
+  </div>
+";
+  
+  $modal = "
+  <div class='btn-group btn-group-sm float-right'>
+    <button type='button' class='btn btn-dark' data-toggle='modal' data-target='#filtersModal'>
+      <i class='fa fa-fw fa-filter' aria-hidden='true'></i>
+    </button>
+  </div>
+  <p>&nbsp;</p>
+  <div class='modal fade' id='filtersModal' tabindex='-1' role='dialog' aria-labelledby='filtersModalLabel' aria-hidden='true'>
+    <div class='modal-dialog' role='document'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 class='modal-title' id='filtersModalLabel' data-i18n='nests_filters_title'>Nest Filters</h5>
+          <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </div>
+        <div class='modal-body'>" . $filters . "</div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-danger' id='reset-filters' data-i18n='nests_modal_reset_filters'>Reset Filters</button>
+          <button type='button' class='btn btn-primary' data-dismiss='modal' data-i18n='nests_modal_close'>Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+";
+
   $geofenceSrvc = new GeofenceService();
 
   // Establish connection to database
@@ -113,6 +175,7 @@ ORDER BY
 
     $result = $pdo->query($sql);
     if ($result->rowCount() > 0) {
+        echo $modal;
         echo "<div id='no-more-tables'>";
         echo "<table id='nest-table' class='table table-".$config['ui']['table']['style']." ".($config['ui']['table']['striped'] ? 'table-striped' : null)."' border='1'>";
         echo "<thead class='thead-".$config['ui']['table']['headerStyle']."'>";
@@ -169,6 +232,28 @@ unset($db);
 <script type='text/javascript' src="https://cdn.jsdelivr.net/npm/osmtogeojson@3.0.0-beta.3/osmtogeojson.js"></script>
 
 <script type='text/javascript'>
+if (get("nests-filter-nest") !== false) {
+  $('#filter-nest').val(get("nests-filter-nest"));
+}
+if (get("nest-filter-pokemon") !== false) {
+  $('#filter-pokemon').val(get("nests-filter-pokemon"));
+}
+if (get("nests-filter-city") !== false) {
+  $('#filter-city').val(JSON.parse(get("nests-filter-city")));
+}
+
+filter_nests();
+
+$('#reset-filters').on('click', function() {
+  if (confirm($.i18n('nests_filters_reset_confirm'))) {
+    $('#filter-nest').val('');
+    $('#filter-pokemon').val('');
+    $('#filter-city').val('All');
+    filter_nests();
+  }
+});
+
+
 /*
 $('#modalSpawnReport').on('hidden.bs.modal', function(event) {
   $('#spawnReportTable > tbody').empty();
