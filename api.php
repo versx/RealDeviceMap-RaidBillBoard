@@ -118,9 +118,13 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                     echo json_encode($obj);
                     break;
                 case "top":
-                    $top10Pokemon = get_top_pokemon(10);
+                    $top10Pokemon = get_top_pokemon(false, false, 10);
+                    $top10PokemonToday = get_top_pokemon(true, false, 10);
+                    $top10PokemonIV = get_top_pokemon(true, true, 10);
                     $obj = [
-                        "top10_pokemon" => $top10Pokemon
+                        "top10_pokemon" => $top10Pokemon,
+                        "top10_pokemon_today" => $top10PokemonToday,
+                        "top10_pokemon_iv" => $top10PokemonIV
                     ];
                     echo json_encode($obj);
                     break;

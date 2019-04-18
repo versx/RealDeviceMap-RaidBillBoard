@@ -90,11 +90,41 @@ $html = "
           </div>
         </div>
       </div>
-      <div class='card text-center p-1 m-3'>
-        <div class='card-header bg-dark text-light'><b data-i18n='dashboard_pokemon_top10'>Top 10 Pokemon (Lifetime)</b></div>
-        <div class='card-body'>
-          <div class='container'>
-            <div id='top-10-pokemon' class='row justify-content-center'></div>
+
+      <div class='card-body text-center p-1 m-3'>
+      <div class='card-header bg-dark text-light'><b data-i18n='dashboard_pokemon_top10'>Top 10 Pokemon</b></div>
+        <ul class='nav nav-tabs justify-content-center' role='tablist'>
+          <li class='nav-item'>
+            <a class='nav-link active' id='top10-lifetime-tab' data-toggle='tab' href='#top10-lifetime' role='tab' aria-controls='top10-lifetime' aria-selected='true' data-i18n='dashboard_pokemon_top10_lifetime'>Lifetime</a>
+          </li>
+          <li class='nav-item'>
+            <a class='nav-link' id='top10-today-tab' data-toggle='tab' href='#top10-today' role='tab' aria-controls='top10-today' aria-selected='false' data-i18n='dashboard_pokemon_top10_today'>Today</a>
+          </li>
+          <li class='nav-item'>
+            <a class='nav-link' id='top10-iv-tab' data-toggle='tab' href='#top10-iv' role='tab' aria-controls='top10-iv' aria-selected='false' data-i18n='dashboard_pokemon_top10_iv'>IV (Today)</a>
+          </li>
+        </ul>
+        <div class='tab-content'>
+          <div class='tab-pane fade show active' id='top10-lifetime' role='tabpanel' aria-labelledby='top10-lifetime-tab'>
+            <div class='card-body'>
+              <div class='container'>
+                <div id='top-10-pokemon-lifetime' class='row justify-content-center'></div>
+              </div>
+            </div>
+          </div>
+          <div class='tab-pane fade' id='top10-today' role='tabpanel' aria-labelledby='top10-today-tab'>
+            <div class='card-body'>
+              <div class='container'>
+                <div id='top-10-pokemon-today' class='row justify-content-center'></div>
+              </div>
+            </div>
+          </div>
+          <div class='tab-pane fade' id='top10-iv' role='tabpanel' aria-labelledby='top10-iv-tab'>
+            <div class='card-body'>
+              <div class='container'>
+                <div id='top-10-pokemon-iv' class='row justify-content-center'></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -348,7 +378,47 @@ function getStats() {
         count++;
       }
     });
-    $('#top-10-pokemon').html(html);
+    $('#top-10-pokemon-lifetime').html(html);
+
+    html = "";
+    count = 0;
+    $.each(obj.top10_pokemon_today, function(key, value) {
+      if (count == 0) {
+        html += "<div class='row justify-content-center'>";
+      }
+      var name = pokedex[value.pokemon_id];
+      var pkmnImage = sprintf("<?=$config['urls']['images']['pokemon']?>", value.pokemon_id);
+      html += "<div class='col-md-2" + (count == 0 ? " col-md-offset-1" : "") + "'>";
+      html += "<img src='" + pkmnImage + "' width='64' height='64'><span class='text-nowrap'>" + name + ": " + numberWithCommas(value.count) + "</span></br>";
+      html += "</div>";
+      if (count == 4) {
+        html += "</div>";
+        count = 0;
+      } else {
+        count++;
+      }
+    });
+    $('#top-10-pokemon-today').html(html);
+
+    html = "";
+    count = 0;
+    $.each(obj.top10_pokemon_iv, function(key, value) {
+      if (count == 0) {
+        html += "<div class='row justify-content-center'>";
+      }
+      var name = pokedex[value.pokemon_id];
+      var pkmnImage = sprintf("<?=$config['urls']['images']['pokemon']?>", value.pokemon_id);
+      html += "<div class='col-md-2" + (count == 0 ? " col-md-offset-1" : "") + "'>";
+      html += "<img src='" + pkmnImage + "' width='64' height='64'><span class='text-nowrap'>" + name + ": " + numberWithCommas(value.count) + "</span></br>";
+      html += "</div>";
+      if (count == 4) {
+        html += "</div>";
+        count = 0;
+      } else {
+        count++;
+      }
+    });
+    $('#top-10-pokemon-iv').html(html);
   });
 }
 

@@ -148,24 +148,29 @@ FROM
     return $data;
 }
 
-function get_top_pokemon($limit = 10) {
+function get_top_pokemon($today, $hasIV, $limit = 10) {
     global $config;
     $db = new DbConnector($config['db']);
     $pdo = $db->getConnection();
+    $where = $today !== false ? " WHERE expire_timestamp >= CURDATE()" : "";
+    $where = $hasIV !== false ? $where .= " AND iv IS NOT NULL" : $where;
     $sql = "
 SELECT
   pokemon_id,
   COUNT(pokemon_id) AS count
 FROM
   pokemon
+$where
 GROUP BY
   pokemon_id
 ORDER BY
-  2 DESC
+  count DESC
 LIMIT
   $limit;
 ";
+file_put_contents('test.txt', $sql);
     $result = $pdo->query($sql);
+    $data = null;
     if ($result->rowCount() > 0) {
         $data = $result->fetchAll();
     }
