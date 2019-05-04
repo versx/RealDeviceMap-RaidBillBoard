@@ -56,8 +56,8 @@ if (!(isset($data['type']) && !empty($data['type']))) {
     $sql = "SELECT * FROM $table LIMIT $limit";
     $result = $pdo->query($sql);
     if ($result->rowCount() > 0) {
-        $data = $result->fetchAll();
         ini_set('memory_limit', '-1');
+        $data = $result->fetchAll();
         echo json_encode($data);
     } else {
         if ($config["core"]["showDebug"]) {
