@@ -12,42 +12,42 @@
     <ul class="navbar-nav ml-auto">
 <?php if ($config['ui']['pages']['dashboard']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['dashboard']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='dashboard' ? 'active' : '' ?>">
-        <a class="nav-link" href="/dashboard"><i class="fa fa-fw fa-tachometer" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_home'>Home</span> <span class="sr-only"></span></a>
+        <a class="nav-link" href="./dashboard"><i class="fa fa-fw fa-tachometer" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_home'>Home</span> <span class="sr-only"></span></a>
       </li>
 <?php } ?>
 <?php if ($config['ui']['pages']['pokemon']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['pokemon']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='pokemon' ? 'active' : '' ?>">
-        <a class="nav-link" href="/pokemon"><i class="fa fa-fw fa-dot-circle-o" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_pokemon'>Pokemon</span></a>
+        <a class="nav-link" href="./pokemon"><i class="fa fa-fw fa-dot-circle-o" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_pokemon'>Pokemon</span></a>
       </li>
 <?php } ?>
 <?php if ($config['ui']['pages']['raids']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['raids']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='raids' ? 'active' : '' ?>">
-        <a class="nav-link" href="/raids"><i class="fa fa-fw fa-bolt" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_raids'>Raids</span></a>
+        <a class="nav-link" href="./raids"><i class="fa fa-fw fa-bolt" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_raids'>Raids</span></a>
       </li>
 <?php } ?>
 <?php if ($config['ui']['pages']['gyms']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['gyms']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='gyms' ? 'active' : '' ?>">
-        <a class="nav-link" href="/gyms"><i class="fa fa-fw fa-shield" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_gyms'>Gyms</span></a>
+        <a class="nav-link" href="./gyms"><i class="fa fa-fw fa-shield" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_gyms'>Gyms</span></a>
       </li>
 <?php } ?>
 <?php if ($config['ui']['pages']['quests']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['quests']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='quests' ? 'active' : '' ?>">
-        <a class="nav-link" href="/quests"><i class="fa fa-fw fa-search-plus" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_quests'>Quests</span></a>
+        <a class="nav-link" href="./quests"><i class="fa fa-fw fa-search-plus" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_quests'>Quests</span></a>
       </li>
 <?php } ?>
 <?php if ($config['ui']['pages']['pokestops']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['pokestops']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='pokestops' ? 'active' : '' ?>">
-        <a class="nav-link" href="/pokestops"><i class="fa fa-fw fa-glass" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_pokestops'>Pokestops</span></a>
+        <a class="nav-link" href="./pokestops"><i class="fa fa-fw fa-glass" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_pokestops'>Pokestops</span></a>
       </li>
 <?php } ?>
 <?php if ($config['ui']['pages']['nests']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['nests']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='nests' ? 'active' : '' ?>">
-        <a class="nav-link" href="/nests"><i class="fa fa-fw fa-connectdevelop" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_nests'>Nests</span></a>
+        <a class="nav-link" href="./nests"><i class="fa fa-fw fa-connectdevelop" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_nests'>Nests</span></a>
       </li>
 <?php } ?>
 <?php if ($config['ui']['pages']['stats']['enabled'] && (!$config['discord']['enabled'] || ($config['discord']['enabled'] && hasDiscordRole($_SESSION['user']['roles'], $config['ui']['pages']['stats']['discordRoles'])))) { ?>
       <li class="nav-item <?=isset($_GET['page']) && $_GET['page']==='stats' ? 'active' : '' ?>">
-        <a class="nav-link" href="/stats"><i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_stats'>Stats</span></a>
+        <a class="nav-link" href="./stats"><i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>&nbsp;<span data-i18n='nav_stats'>Stats</span></a>
       </li>
 <?php } ?>
 <?php if (!empty($config['urls']['map'])) { ?>
