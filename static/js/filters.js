@@ -177,7 +177,6 @@ function filter_quests() {
 
 function filter_nests() {
   if (!document.getElementById("filter-nest")) {
-    console.log("NULLLLLL");
     return;
   }
   var cityFilter = $('#filter-city').val();
