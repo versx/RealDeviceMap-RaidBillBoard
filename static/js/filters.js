@@ -176,6 +176,10 @@ function filter_quests() {
 }
 
 function filter_nests() {
+  if (!document.getElementById("filter-nest")) {
+    console.log("NULLLLLL");
+    return;
+  }
   var cityFilter = $('#filter-city').val();
   var nestFilter = document.getElementById("filter-nest").value;
   var pkmnFilter = document.getElementById("filter-pokemon").value;
