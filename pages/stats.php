@@ -562,15 +562,25 @@ function updateQuestChart(chart, dateFilter, rewardFilter) {
     obj.forEach(stat => {
       if (stat.date === dateFilter) {
         //var color = getRandomColor();
-        //Pokemon encounter
-        if (stat.reward_type == 7) {
-          //addDataset(chart, { data: [stat.count], backgroundColor: color, label: pokedex[stat.pokemon_id] });
-          rewards.push(pokedex[stat.pokemon_id]);
-          amounts.push(stat.count);
-        } else {
-          //addDataset(chart, { data: [stat.count], backgroundColor: color, label: get_item(stat.item_id) });
-          rewards.push(get_item(stat.item_id));
-          amounts.push(stat.count);
+        switch (parseInt(stat.reward_type)) {
+          case 1: //Experience points
+            rewards.push("XP");
+            amounts.push(stat.count);
+            break;
+          case 3: //Stardust
+            rewards.push("Stardust");
+            amounts.push(stat.count);
+            break;
+          case 7: //Pokemon encounter
+            //addDataset(chart, { data: [stat.count], backgroundColor: color, label: pokedex[stat.pokemon_id] });
+            rewards.push(pokedex[stat.pokemon_id]);
+            amounts.push(stat.count);
+            break;
+          default:
+            //addDataset(chart, { data: [stat.count], backgroundColor: color, label: get_item(stat.item_id) });
+            rewards.push(get_item(stat.item_id));
+            amounts.push(stat.count);
+            break;
         }
       }
     });
