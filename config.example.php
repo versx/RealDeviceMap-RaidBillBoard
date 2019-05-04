@@ -93,7 +93,7 @@ $config = [
       "nests" => [
         "enabled" => true, //Shows/hides gyms page
         "discordRoles" => [], //Requires specific discord role, otherwise leave empty as []
-        "ignoreUnknown",
+        "ignoreUnknown" => false,
         "type" => "osm", //osm/pmsf
         "db" => [ //PMSF manualdb information
           "host" => "127.0.0.1", //PMSF database host name or IP address
