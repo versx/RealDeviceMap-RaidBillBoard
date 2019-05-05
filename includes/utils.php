@@ -168,7 +168,6 @@ ORDER BY
 LIMIT
   $limit;
 ";
-file_put_contents('test.txt', $sql);
     $result = $pdo->query($sql);
     $data = null;
     if ($result->rowCount() > 0) {
