@@ -192,7 +192,7 @@ FROM
 WHERE
   raid_pokemon_id IS NOT NULL
   AND name IS NOT NULL 
-  AND raid_end_timestamp < UNIX_TIMESTAMP()
+  AND raid_end_timestamp > UNIX_TIMESTAMP()
 ORDER BY
   raid_end_timestamp;
 ";
