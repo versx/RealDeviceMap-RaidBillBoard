@@ -16,16 +16,20 @@ function get_gym_stats() {
     $pdo = $db->getConnection();
     $sql = "
 SELECT
-  team_id AS team,
-  COUNT(id) AS count
+  COUNT(id) AS gyms,
+  SUM(team_id=0) AS neutral,
+  SUM(team_id=1) AS mystic,
+  SUM(team_id=2) AS valor,
+  SUM(team_id=3) AS instinct,
+  SUM(raid_pokemon_id IS NOT NULL AND 
+      name IS NOT NULL AND 
+      raid_end_timestamp >= UNIX_TIMESTAMP()) AS raids
 FROM
   gym
-GROUP BY
-  team
 ";
     $result = $pdo->query($sql);
     if ($result->rowcount() > 0) {
-        $data = $result->fetchAll(PDO::FETCH_KEY_PAIR);
+        $data = $result->fetchAll()[0];
     }
     unset($pdo);
     unset($db);
@@ -55,27 +59,6 @@ FROM pokestop
     unset($db);
   
     return $data;
-}
-  
-function get_raid_stats() {
-    global $config;
-    $db = new DbConnector($config['db']);
-    $pdo = $db->getConnection();
-    $sql = "
-SELECT
-  COUNT(id)
-FROM
-  gym
-WHERE
-  raid_pokemon_id IS NOT NULL
-  AND name IS NOT NULL
-  AND raid_end_timestamp >= UNIX_TIMESTAMP()
-";
-    $count = $pdo->query($sql)->fetchColumn();
-    unset($pdo);
-    unset($db);
-      
-    return $count;
 }
   
 function get_table_count($table) {
@@ -209,7 +192,7 @@ FROM
 WHERE
   raid_pokemon_id IS NOT NULL
   AND name IS NOT NULL 
-  AND raid_end_timestamp > UNIX_TIMESTAMP()
+  AND raid_end_timestamp < UNIX_TIMESTAMP()
 ORDER BY
   raid_end_timestamp;
 ";

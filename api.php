@@ -84,15 +84,13 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                     break;
                 case "gyms":
                     $gymStats = get_gym_stats();
-                    $gymCount = get_table_count("gym");
-                    $raidCount = get_raid_stats();
                     $obj = [
-                        "gyms" => $gymCount,
-                        "raids" => $raidCount,
-                        "neutral" => $gymStats === 0 ? 0 : count($gymStats) < 4 ? 0 : $gymStats[0],
-                        "mystic" => $gymStats === 0 ? 0 : $gymStats[1],
-                        "valor" => $gymStats === 0 ? 0 : $gymStats[2],
-                        "instinct" => $gymStats === 0 ? 0 : $gymStats[3],
+                        "gyms" => $gymStats === 0 ? 0 : $gymStats["gyms"],
+                        "raids" => $gymStats === 0 ? 0 : $gymStats["raids"],
+                        "neutral" => $gymStats === 0 ? 0 : $gymStats["neutral"],
+                        "mystic" => $gymStats === 0 ? 0 : $gymStats["mystic"],
+                        "valor" => $gymStats === 0 ? 0 : $gymStats["valor"],
+                        "instinct" => $gymStats === 0 ? 0 : $gymStats["instinct"]
                     ];
                     echo json_encode($obj);
                     break;
