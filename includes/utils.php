@@ -153,6 +153,7 @@ function get_top_pokemon($today, $hasIV, $limit = 10) {
     $db = new DbConnector($config['db']);
     $pdo = $db->getConnection();
     $where = $today !== false ? " WHERE expire_timestamp >= CURDATE()" : "";
+    $where = $today !== false ? " WHERE expire_timestamp >= UNIX_TIMESTAMP(CURDATE())" : "";
     $where = $hasIV !== false ? $where .= " AND iv IS NOT NULL" : $where;
     $sql = "
 SELECT
@@ -214,18 +215,18 @@ ORDER BY
 }
 
 function execute($sql, $mode = PDO::FETCH_ASSOC) {
-  global $config;
-  $db = new DbConnector($config['db']);
-  $pdo = $db->getConnection();
-  $result = $pdo->query($sql);
-  $data = null;
-  if ($result->rowCount() > 0) {
-      $data = $result->fetchAll($mode);
-  }
-  unset($pdo);
-  unset($db);
-
-  return $data;
+      global $config;
+      $db = new DbConnector($config['db']);
+      $pdo = $db->getConnection();
+      $result = $pdo->query($sql);
+      $data = null;
+      if ($result->rowCount() > 0) {
+            $data = $result->fetchAll($mode);
+      }
+      unset($pdo);
+      unset($db);
+    
+      return $data;
 }
 
 function get_raid_image($pokemonId, $raidLevel) {
