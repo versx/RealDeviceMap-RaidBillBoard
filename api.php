@@ -100,7 +100,10 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                     $stopStats = get_pokestop_stats();
                     $obj = [
                         "pokestops" => $stopStats === 0 ? 0 : $stopStats["total"],
-                        "lured" => $stopStats === 0 ? 0 : $stopStats["lured"],
+                        "normal_lures" => $stopStats === 0 ? 0 : $stopStats["normal_lures"],
+                        "glacial_lures" => $stopStats === 0 ? 0 : $stopStats["glacial_lures"],
+                        "mossy_lures" => $stopStats === 0 ? 0 : $stopStats["mossy_lures"],
+                        "magnetic_lures" => $stopStats === 0 ? 0 : $stopStats["magnetic_lures"],
                         "quests" => $stopStats === 0 ? 0 : $stopStats["quests"],
                     ];
                     echo json_encode($obj);

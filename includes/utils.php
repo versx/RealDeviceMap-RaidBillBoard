@@ -38,12 +38,14 @@ function get_pokestop_stats() {
     $db = new DbConnector($config['db']);
     $pdo = $db->getConnection();
     $sql = "
-SELECT 
-  COUNT(id) total,
-  SUM(CASE WHEN lure_expire_timestamp > UNIX_TIMESTAMP() THEN 1 ELSE 0 END) lured,
-  SUM(CASE WHEN quest_reward_type THEN 1 ELSE 0 END) quests
-FROM
-  pokestop
+SELECT
+  COUNT(id) AS total,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=501) AS normal_lures,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=502) AS glacial_lures,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=503) AS mossy_lures,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=504) AS magnetic_lures,
+  SUM(quest_reward_type IS NOT NULL) quests
+FROM pokestop
 ";
     $result = $pdo->query($sql);
     if ($result->rowCount() > 0) {
@@ -100,6 +102,7 @@ function get_pokestop_objects() {
     return $result;
 }
 
+//TODO: Fix spawnpoint timer stats
 function get_spawnpoint_stats() {
     global $config;
     $db = new DbConnector($config['db']);

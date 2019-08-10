@@ -183,21 +183,42 @@ $html = "
   <div class='card-body'>
     <div class='container'>
       <div class='row'>
-        <div class='col-md-3'>
+        <div class='col-md-4 p-1'>
           <a class='list-group-item'>
             <h3 class='pull-right'><img src='./static/images/pokestop.png' width='64' height='64'/></h3>
             <h4 class='list-group-item-heading pokestop-count'>0</h4>
             <p class='list-group-item-text' data-i18n='dashboard_pokestops_total'>Pokestops</p>
           </a>
         </div>
-        <div class='col-md-3'>
+        <div class='col-md-4 p-1'>
           <a class='list-group-item'>
             <h3 class='pull-right'><img src='./static/images/lure-module.png' width='64' height='64'/></h3>
             <h4 class='list-group-item-heading lured-pokestop-count'>0</h4>
-            <p class='list-group-item-text' data-i18n='dashboard_pokestops_lured'>Lured Pokestops</p>
+            <p class='list-group-item-text' data-i18n='dashboard_pokestops_normal_lures'>Normal Lures</p>
           </a>
         </div>
-        <div class='col-md-3'>
+        <div class='col-md-4 p-1'>
+          <a class='list-group-item'>
+            <h3 class='pull-right'><img src='./static/images/lure-module-glacial.png' width='64' height='64'/></h3>
+            <h4 class='list-group-item-heading lured-glacial-pokestop-count'>0</h4>
+            <p class='list-group-item-text' data-i18n='dashboard_pokestops_glacial_lures'>Glacial Lures</p>
+          </a>
+        </div>
+        <div class='col-md-4 p-1'>
+          <a class='list-group-item'>
+            <h3 class='pull-right'><img src='./static/images/lure-module-mossy.png' width='64' height='64'/></h3>
+            <h4 class='list-group-item-heading lured-mossy-pokestop-count'>0</h4>
+            <p class='list-group-item-text' data-i18n='dashboard_pokestops_mossy_lures'>Mossy Lures</p>
+          </a>
+        </div>
+        <div class='col-md-4 p-1'>
+          <a class='list-group-item'>
+            <h3 class='pull-right'><img src='./static/images/lure-module-magnetic.png' width='64' height='64'/></h3>
+            <h4 class='list-group-item-heading lured-magnetic-pokestop-count'>0</h4>
+            <p class='list-group-item-text' data-i18n='dashboard_pokestops_magnetic_lures'>Magnetic Lures</p>
+          </a>
+        </div>
+        <div class='col-md-4 p-1'>
           <a class='list-group-item'>
             <h3 class='pull-right'><img src='./static/images/quests/0.png' width='64' height='64'/></h3>
             <h4 class='list-group-item-heading quest-pokestop-count'>0</h4>
@@ -323,7 +344,10 @@ function getStats() {
     }
     var obj = JSON.parse(data);
     updateCounter(".pokestop-count", obj.pokestops);
-    updateCounter(".lured-pokestop-count", obj.lured);
+    updateCounter(".lured-pokestop-count", obj.normal_lures);
+    updateCounter(".lured-glacial-pokestop-count", obj.glacial_lures);
+    updateCounter(".lured-mossy-pokestop-count", obj.mossy_lures);
+    updateCounter(".lured-magnetic-pokestop-count", obj.magnetic_lures);
     updateCounter(".quest-pokestop-count", obj.quests);
   });
 
