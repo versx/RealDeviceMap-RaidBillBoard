@@ -152,7 +152,6 @@ function get_top_pokemon($today, $hasIV, $limit = 10) {
     global $config;
     $db = new DbConnector($config['db']);
     $pdo = $db->getConnection();
-    $where = $today !== false ? " WHERE expire_timestamp >= CURDATE()" : "";
     $where = $today !== false ? " WHERE expire_timestamp >= UNIX_TIMESTAMP(CURDATE())" : "";
     $where = $hasIV !== false ? $where .= " AND iv IS NOT NULL" : $where;
     $sql = "
