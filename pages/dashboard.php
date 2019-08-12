@@ -204,6 +204,13 @@ $html = "
             <p class='list-group-item-text' data-i18n='dashboard_pokestops_quests'>Field Research</p>
           </a>
         </div>
+        <div class='col-md-3'>
+          <a class='list-group-item'>
+            <h3 class='pull-right'><img src='./static/images/invasion.png' width='64' height='64'/></h3>
+            <h4 class='list-group-item-heading invasion-count'>0</h4>
+            <p class='list-group-item-text' data-i18n='dashboard_pokestops_invasions'>Invasions</p>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -325,6 +332,7 @@ function getStats() {
     updateCounter(".pokestop-count", obj.pokestops);
     updateCounter(".lured-pokestop-count", obj.lured);
     updateCounter(".quest-pokestop-count", obj.quests);
+    updateCounter(".invasion-count", obj.invasions);
   });
 
   tmp = createToken();

@@ -41,6 +41,7 @@ function get_pokestop_stats() {
 SELECT 
   COUNT(id) total,
   SUM(CASE WHEN lure_expire_timestamp > UNIX_TIMESTAMP() THEN 1 ELSE 0 END) lured,
+  SUM(CASE WHEN incident_expire_timestamp > UNIX_TIMESTAMP() THEN 1 ELSE 0 END) invasions,
   SUM(CASE WHEN quest_reward_type THEN 1 ELSE 0 END) quests
 FROM
   pokestop
