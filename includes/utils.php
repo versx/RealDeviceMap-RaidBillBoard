@@ -48,6 +48,7 @@ SELECT
   SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=502) AS glacial_lures,
   SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=503) AS mossy_lures,
   SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=504) AS magnetic_lures,
+  SUM(incident_expire_timestamp > UNIX_TIMESTAMP()) invasions,
   SUM(quest_reward_type IS NOT NULL) quests
 FROM pokestop
 ";

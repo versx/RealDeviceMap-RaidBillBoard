@@ -103,6 +103,7 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                         "mossy_lures" => $stopStats === 0 ? 0 : $stopStats["mossy_lures"],
                         "magnetic_lures" => $stopStats === 0 ? 0 : $stopStats["magnetic_lures"],
                         "quests" => $stopStats === 0 ? 0 : $stopStats["quests"],
+                        "invasions" => $stopStats === 0 ? 0 : $stopStats["invasions"],
                     ];
                     echo json_encode($obj);
                     break;
