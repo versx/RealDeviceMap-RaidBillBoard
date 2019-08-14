@@ -84,15 +84,13 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                     break;
                 case "gyms":
                     $gymStats = get_gym_stats();
-                    $gymCount = get_table_count("gym");
-                    $raidCount = get_raid_stats();
                     $obj = [
-                        "gyms" => $gymCount,
-                        "raids" => $raidCount,
-                        "neutral" => $gymStats === 0 ? 0 : count($gymStats) < 4 ? 0 : $gymStats[0],
-                        "mystic" => $gymStats === 0 ? 0 : $gymStats[1],
-                        "valor" => $gymStats === 0 ? 0 : $gymStats[2],
-                        "instinct" => $gymStats === 0 ? 0 : $gymStats[3],
+                        "gyms" => $gymStats === 0 ? 0 : $gymStats["gyms"],
+                        "raids" => $gymStats === 0 ? 0 : $gymStats["raids"],
+                        "neutral" => $gymStats === 0 ? 0 : $gymStats["neutral"],
+                        "mystic" => $gymStats === 0 ? 0 : $gymStats["mystic"],
+                        "valor" => $gymStats === 0 ? 0 : $gymStats["valor"],
+                        "instinct" => $gymStats === 0 ? 0 : $gymStats["instinct"]
                     ];
                     echo json_encode($obj);
                     break;
@@ -100,7 +98,10 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                     $stopStats = get_pokestop_stats();
                     $obj = [
                         "pokestops" => $stopStats === 0 ? 0 : $stopStats["total"],
-                        "lured" => $stopStats === 0 ? 0 : $stopStats["lured"],
+                        "normal_lures" => $stopStats === 0 ? 0 : $stopStats["normal_lures"],
+                        "glacial_lures" => $stopStats === 0 ? 0 : $stopStats["glacial_lures"],
+                        "mossy_lures" => $stopStats === 0 ? 0 : $stopStats["mossy_lures"],
+                        "magnetic_lures" => $stopStats === 0 ? 0 : $stopStats["magnetic_lures"],
                         "quests" => $stopStats === 0 ? 0 : $stopStats["quests"],
                         "invasions" => $stopStats === 0 ? 0 : $stopStats["invasions"],
                     ];

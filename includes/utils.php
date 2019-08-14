@@ -16,16 +16,20 @@ function get_gym_stats() {
     $pdo = $db->getConnection();
     $sql = "
 SELECT
-  team_id AS team,
-  COUNT(id) AS count
+  COUNT(id) AS gyms,
+  SUM(team_id=0) AS neutral,
+  SUM(team_id=1) AS mystic,
+  SUM(team_id=2) AS valor,
+  SUM(team_id=3) AS instinct,
+  SUM(raid_pokemon_id IS NOT NULL AND 
+      name IS NOT NULL AND 
+      raid_end_timestamp >= UNIX_TIMESTAMP()) AS raids
 FROM
   gym
-GROUP BY
-  team
 ";
     $result = $pdo->query($sql);
     if ($result->rowcount() > 0) {
-        $data = $result->fetchAll(PDO::FETCH_KEY_PAIR);
+        $data = $result->fetchAll()[0];
     }
     unset($pdo);
     unset($db);
@@ -38,13 +42,15 @@ function get_pokestop_stats() {
     $db = new DbConnector($config['db']);
     $pdo = $db->getConnection();
     $sql = "
-SELECT 
-  COUNT(id) total,
-  SUM(CASE WHEN lure_expire_timestamp > UNIX_TIMESTAMP() THEN 1 ELSE 0 END) lured,
-  SUM(CASE WHEN incident_expire_timestamp > UNIX_TIMESTAMP() THEN 1 ELSE 0 END) invasions,
-  SUM(CASE WHEN quest_reward_type THEN 1 ELSE 0 END) quests
-FROM
-  pokestop
+SELECT
+  COUNT(id) AS total,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=501) AS normal_lures,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=502) AS glacial_lures,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=503) AS mossy_lures,
+  SUM(lure_expire_timestamp > UNIX_TIMESTAMP() AND lure_id=504) AS magnetic_lures,
+  SUM(incident_expire_timestamp > UNIX_TIMESTAMP()) invasions,
+  SUM(quest_reward_type IS NOT NULL) quests
+FROM pokestop
 ";
     $result = $pdo->query($sql);
     if ($result->rowCount() > 0) {
@@ -54,27 +60,6 @@ FROM
     unset($db);
   
     return $data;
-}
-  
-function get_raid_stats() {
-    global $config;
-    $db = new DbConnector($config['db']);
-    $pdo = $db->getConnection();
-    $sql = "
-SELECT
-  COUNT(id)
-FROM
-  gym
-WHERE
-  raid_pokemon_id IS NOT NULL
-  AND name IS NOT NULL
-  AND raid_end_timestamp >= UNIX_TIMESTAMP()
-";
-    $count = $pdo->query($sql)->fetchColumn();
-    unset($pdo);
-    unset($db);
-      
-    return $count;
 }
   
 function get_table_count($table) {
@@ -101,6 +86,7 @@ function get_pokestop_objects() {
     return $result;
 }
 
+//TODO: Fix spawnpoint timer stats
 function get_spawnpoint_stats() {
     global $config;
     $db = new DbConnector($config['db']);
@@ -153,7 +139,7 @@ function get_top_pokemon($today, $hasIV, $limit = 10) {
     global $config;
     $db = new DbConnector($config['db']);
     $pdo = $db->getConnection();
-    $where = $today !== false ? " WHERE expire_timestamp >= CURDATE()" : "";
+    $where = $today !== false ? " WHERE expire_timestamp >= UNIX_TIMESTAMP(CURDATE())" : "";
     $where = $hasIV !== false ? $where .= " AND iv IS NOT NULL" : $where;
     $sql = "
 SELECT
@@ -215,18 +201,18 @@ ORDER BY
 }
 
 function execute($sql, $mode = PDO::FETCH_ASSOC) {
-  global $config;
-  $db = new DbConnector($config['db']);
-  $pdo = $db->getConnection();
-  $result = $pdo->query($sql);
-  $data = null;
-  if ($result->rowCount() > 0) {
-      $data = $result->fetchAll($mode);
-  }
-  unset($pdo);
-  unset($db);
-
-  return $data;
+      global $config;
+      $db = new DbConnector($config['db']);
+      $pdo = $db->getConnection();
+      $result = $pdo->query($sql);
+      $data = null;
+      if ($result->rowCount() > 0) {
+            $data = $result->fetchAll($mode);
+      }
+      unset($pdo);
+      unset($db);
+    
+      return $data;
 }
 
 function get_raid_image($pokemonId, $raidLevel) {
