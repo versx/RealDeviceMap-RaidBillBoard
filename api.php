@@ -130,6 +130,13 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                     ];
                     echo json_encode($obj);
                     break;
+                case "rare":
+                    $rareQuests = get_rare_quests("147, 246, 327");
+                    $obj = [
+                        "rare_quests" => $rareQuests
+                    ];
+                    echo json_encode($obj);
+                    break;
             }
             /*
             $gymStats = get_gym_stats();
@@ -167,9 +174,9 @@ if (!(isset($data['type']) && !empty($data['type']))) {
             $spawnpoints = getSpawnpointNestData($coords);
             $pokestops = getPokestopNestData($coords);
             $args = [
-                "spawn_ids" => $spawnpoints, 
-                "pokestop_ids" => $pokestops, 
-                "nest_migration_timestamp" => $data["data"]["nest_migration_timestamp"], 
+                "spawn_ids" => $spawnpoints,
+                "pokestop_ids" => $pokestops,
+                "nest_migration_timestamp" => $data["data"]["nest_migration_timestamp"],
                 "spawn_report_limit" => $data["data"]["spawn_report_limit"]
             ];
             try {
@@ -230,7 +237,7 @@ function getSpawnData($args) {
             $stops_in  = str_repeat('?,', count($args["pokestop_ids"]) - 1) . '?';
             $binds = array_merge($binds, $args["pokestop_ids"]);
         }
-      
+
         if ($stops_in && $spawns_in) {
             $points_string = "(pokestop_id IN (" . $stops_in . ") OR spawn_id IN (" . $spawns_in . "))";
         } else if ($stops_in) {
@@ -252,7 +259,7 @@ function getSpawnData($args) {
             $limit = " LIMIT " . $args["spawn_report_limit"];
         } else {
             $limit = '';
-        }    
+        }
 
         $sql_spawn = "
 SELECT
@@ -273,7 +280,7 @@ ORDER BY
             $stmt->execute($binds);
         } catch (PDOException $e) {
             echo json_encode(["error" => true, "message" => $e]);
-        } 
+        }
 
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         unset($pdo);
