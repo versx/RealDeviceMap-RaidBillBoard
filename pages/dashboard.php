@@ -129,13 +129,12 @@ $html = "
         </div>
       </div>
       <div class='card-body text-center p-1 m-3'>
-        <div class='card-header bg-dark text-light'><b>Shiny Rates</b></div>
-          <div class='tab-content'>
-            <div class='tab-pane fade show active' id='shiny-rates' role='tabpanel' aria-labelledby='shiny-rates'>
-              <div class='card-body'>
-                <div class='container'>
-                  <div id='shiny-rates' class='row justify-content-center'></div>
-                </div>
+      <div class='card-header bg-dark text-light'><b>Shiny Rates</b></div>
+        <div class='tab-content'>
+          <div class='tab-pane fade show active' id='shiny-rates' role='tabpanel' aria-labelledby='shiny-rates'>
+            <div class='card-body'>
+              <div class='container'>
+                <div id='shiny-rates' class='row justify-content-center'></div>
               </div>
             </div>
           </div>
@@ -198,9 +197,9 @@ $html = "
       <div class='row'>
         <div class='col-md-4 p-1'>
           <a class='list-group-item'>
-            <h3 class='pull-right'><img src='./static/images/pokestop.png' width='64' height='64'/></h3>
-            <h4 class='list-group-item-heading pokestop-count'>0</h4>
-            <p class='list-group-item-text' data-i18n='dashboard_pokestops_total'>Pokestops</p>
+            <h3 class='pull-right'><img src='./static/images/invasion.png' width='64' height='64'/></h3>
+            <h4 class='list-group-item-heading invasion-count'>0</h4>
+            <p class='list-group-item-text' data-i18n='dashboard_pokestops_invasions'>Invasions</p>
           </a>
         </div>
         <div class='col-md-4 p-1'>
@@ -238,21 +237,13 @@ $html = "
             <p class='list-group-item-text' data-i18n='dashboard_pokestops_quests'>Field Research</p>
           </a>
         </div>
-        <div class='col-md-3'>
-          <a class='list-group-item'>
-            <h3 class='pull-right'><img src='./static/images/invasion.png' width='64' height='64'/></h3>
-            <h4 class='list-group-item-heading invasion-count'>0</h4>
-            <p class='list-group-item-text' data-i18n='dashboard_pokestops_invasions'>Invasions</p>
-          </a>
-        </div>
       <div class='card-body text-center p-1 m-3'>
-        <div class='card-header bg-dark text-light'><b>Rare Quests</b></div>
-          <div class='tab-content'>
-            <div class='tab-pane fade show active' id='rare_quests' role='tabpanel' aria-labelledby='rare_quests'>
-              <div class='card-body'>
-                <div class='container'>
-                  <div id='rare-quests' class='row justify-content-center'></div>
-                </div>
+      <div class='card-header bg-dark text-light'><b>Rare Quests</b></div>
+        <div class='tab-content'>
+          <div class='tab-pane fade show active' id='rare-quests' role='tabpanel' aria-labelledby='rare-quests'>
+            <div class='card-body'>
+              <div class='container'>
+                <div id='rare-quests' class='row justify-content-center'></div>
               </div>
             </div>
           </div>
@@ -261,7 +252,7 @@ $html = "
     </div>
   </div>
 </div>
-
+</div>
 <div class='card text-center p-1 m-3'>
   <div class='card-header bg-dark text-light'><b data-i18n='dashboard_tth_header'>Spawnpoint Timers</b></div>
   <div class='card-body'>
@@ -492,14 +483,14 @@ function getStats() {
     var obj = JSON.parse(data);
     var html = "";
     var count = 0;
-    $.each(obj.top_quests, function(key, value) {
+    $.each(obj.rare_quests, function(key, value) {
       if (count == 0) {
         html += "<div class='row justify-content-center'>";
       }
       var name = pokedex[value.quest_pokemon_id];
       var pkmnImage = sprintf("<?=$config['urls']['images']['pokemon']?>", value.quest_pokemon_id);
       html += "<div class='col-md-2" + (count == 0 ? " col-md-offset-1" : "") + "'>";
-      html += "<img src='" + pkmnImage + "' width='64' height='64'><p><span class='text-nowrap'>" + name + ": " + numberWithCommas(value.count) + "</span></p></br>";
+      html += "<img src='" + pkmnImage + "' width='64' height='64'><p><span class='text-nowrap'>" + name + ": " + numberWithCommas(value.count) + "</span></p>";
       html += "</div>";
       if (count == 4) {
         html += "</div>";
