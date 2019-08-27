@@ -137,6 +137,13 @@ if (!(isset($data['type']) && !empty($data['type']))) {
                     ];
                     echo json_encode($obj);
                     break;
+                case "shiny":
+                    $shinyRates = get_shiny_rates();
+                    $obj = [
+                        "shiny_rates" => $shinyRates
+                    ];
+                    echo json_encode($obj);
+                    break;
             }
             /*
             $gymStats = get_gym_stats();

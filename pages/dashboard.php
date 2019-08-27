@@ -128,6 +128,19 @@ $html = "
           </div>
         </div>
       </div>
+      <div class='card-body text-center p-1 m-3'>
+        <div class='card-header bg-dark text-light'><b>Shiny Rates</b></div>
+          <div class='tab-content'>
+            <div class='tab-pane fade show active' id='shiny-rates' role='tabpanel' aria-labelledby='shiny-rates'>
+              <div class='card-body'>
+                <div class='container'>
+                  <div id='shiny-rates' class='row justify-content-center'></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -496,6 +509,40 @@ function getStats() {
       }
     });
     $('#rare-quests').html(html);
+  });
+
+  tmp = createToken();
+  sendRequest({ "type": "dashboard", "stat": "shiny", "token": tmp }, function(data, status) {
+    tmp = null;
+    if (debug) {
+      if (data === 0) {
+        console.log("Failed to get data for dashboard.");
+        return;
+      } else {
+        console.log("Dashboard:", data);
+      }
+    }
+    var obj = JSON.parse(data);
+    var html = "";
+    var count = 0;
+    $.each(obj.shiny_rates, function(key, value) {
+      if (count == 0) {
+        html += "<div class='row justify-content-center'>";
+      }
+      var name = pokedex[value.pokeid];
+      var pkmnImage = sprintf("<?=$config['urls']['images']['pokemon']?>", value.pokeid);
+      html += "<div class='col-md-2" + (count == 0 ? " col-md-offset-1" : "") + "'>";
+      html += "<img src='" + pkmnImage + "' width='64' height='64'><p><span class='text-nowrap'>" + name + ": " + numberWithCommas(value.count) + "</span>";
+      html += "<span class='text-nowrap'><br>(" + numberWithCommas(((value.count/value.total)*100).toFixed(3)) + "%)</span></p></br>";
+      html += "</div>";
+      if (count == 4) {
+        html += "</div>";
+        count = 0;
+      } else {
+        count++;
+      }
+    });
+    $('#shiny-rates').html(html);
   });
 }
 
