@@ -194,6 +194,36 @@ ORDER BY
     return $data;
 }
 
+function get_shiny_rates() {
+    global $config;
+    $db = new DbConnector($config['db']);
+    $pdo = $db->getConnection();
+    $where = " WHERE shiny = 1 ";
+    $sql = "
+SELECT
+  pokemon_id as pokeid,
+  COUNT(pokemon_id) AS count,
+  (SELECT count(pokemon_id) FROM pokemon p where p.pokemon_id=pokeid) as total
+FROM
+  pokemon
+$where
+GROUP BY
+  pokemon_id
+ORDER BY
+  count DESC
+";
+
+    $result = $pdo->query($sql);
+    $data = null;
+    if ($result->rowCount() > 0) {
+        $data = $result->fetchAll();
+    }
+    unset($pdo);
+    unset($db);
+
+    return $data;
+}
+
 function get_raids() {
     global $config;
 
